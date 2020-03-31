@@ -26,7 +26,7 @@ public class JobScheduler {
   private JobLauncher jobLauncher;
 
   @Autowired
-  private Job capitalizeNamesJob;
+  private Job creditJob;
 
   private boolean enabled = false;
 
@@ -38,7 +38,7 @@ public class JobScheduler {
     LOGGER.info("start runBatchJob");
 
     if (enabled) {
-      jobLauncher.run(capitalizeNamesJob, new JobParametersBuilder()
+      jobLauncher.run(creditJob, new JobParametersBuilder()
           .addDate("date", new Date()).toJobParameters());
     }
   }
