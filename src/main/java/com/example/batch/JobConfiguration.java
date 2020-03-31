@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.batch;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -45,7 +45,7 @@ public class JobConfiguration {
 
 	@Bean
 	public ItemReader<String> multiResourceItemReader(){
-		MultiResourceItemReader<String> reader = new MultiResourceItemReader<>();
+		final MultiResourceItemReader<String> reader = new MultiResourceItemReader<>();
 		reader.setResources(resources);
 		reader.setDelegate(itemReader());
 		return reader;
@@ -59,15 +59,15 @@ public class JobConfiguration {
 			private StepExecution stepExecution;
 
 			@BeforeStep
-			public void saveStepExecution(StepExecution stepExecution) {
+			public void saveStepExecution(final StepExecution stepExecution) {
 				this.stepExecution = stepExecution;
 			}
 
 			@Nullable
 			@Override
-			public String process(String item) {
-				ExecutionContext executionContext = stepExecution.getExecutionContext();
-				int resourceIndex = executionContext.getInt("MultiResourceItemReader.resourceIndex");
+			public String process(final String item) {
+				final ExecutionContext executionContext = stepExecution.getExecutionContext();
+				final int resourceIndex = executionContext.getInt("MultiResourceItemReader.resourceIndex");
 				System.out.println("processing item = " + item + " coming from resource = " + resources[resourceIndex + 1]);
 				return item;
 			}
@@ -79,7 +79,7 @@ public class JobConfiguration {
 	@Bean
 	public ItemWriter<String> itemWriter() {
 		return items -> {
-			for (String item : items) {
+			for (final String item : items) {
 				System.out.println("writing item = " + item);
 			}
 		};
