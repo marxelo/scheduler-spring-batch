@@ -20,11 +20,11 @@ public class JobController {
 
   @RequestMapping(value = "/creditJob/{processingDate}", method = RequestMethod.GET)
   public String toggleBatchJob(@PathVariable String processingDate) {
-    boolean toggleEnabled =
-        !JobScheduler.isEnabled();
-    JobScheduler.setEnabled(toggleEnabled);
+    // boolean toggleEnabled =
+    //     !JobScheduler.isEnabled();
+    // JobScheduler.setEnabled(toggleEnabled);
 
-    String result = "isEnabled=" + toggleEnabled;
+    String result = JobScheduler.run();
     LOGGER.info("processing Date: " + processingDate);
     LOGGER.info(result);
 
