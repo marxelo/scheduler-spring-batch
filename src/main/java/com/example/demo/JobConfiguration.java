@@ -80,7 +80,7 @@ public class JobConfiguration {
 	public ItemWriter<String> itemWriter() {
 		return items -> {
 			for (String item : items) {
-				System.out.println("writing item = " + item);
+				System.out.println("writing item :  " + item);
 			}
 		};
 	}
