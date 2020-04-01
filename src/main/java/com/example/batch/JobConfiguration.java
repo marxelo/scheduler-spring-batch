@@ -1,6 +1,7 @@
 package com.example.batch;
 
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.BeforeStep;
@@ -24,10 +25,8 @@ import org.springframework.lang.Nullable;
 @Configuration
 public class JobConfiguration {
 
-	static Resource[] resources = new Resource[]{
-			new ClassPathResource("data1.csv"),
-			new ClassPathResource("data2.csv")
-	};
+	static Resource[] resources = new Resource[] { new ClassPathResource("data1.csv"),
+			new ClassPathResource("data2.csv") };
 
 	@Autowired
 	private JobBuilderFactory jobs;
@@ -37,14 +36,12 @@ public class JobConfiguration {
 
 	@Bean
 	public FlatFileItemReader<String> itemReader() {
-		return new FlatFileItemReaderBuilder<String>()
-				.name("itemReader")
-				.lineMapper(new PassThroughLineMapper())
+		return new FlatFileItemReaderBuilder<String>().name("itemReader").lineMapper(new PassThroughLineMapper())
 				.build();
 	}
 
 	@Bean
-	public ItemReader<String> multiResourceItemReader(){
+	public ItemReader<String> multiResourceItemReader() {
 		final MultiResourceItemReader<String> reader = new MultiResourceItemReader<>();
 		reader.setResources(resources);
 		reader.setDelegate(itemReader());
@@ -61,6 +58,11 @@ public class JobConfiguration {
 			@BeforeStep
 			public void saveStepExecution(final StepExecution stepExecution) {
 				this.stepExecution = stepExecution;
+				JobParameters jobParameters = stepExecution.getJobParameters();
+
+				String processingDate = jobParameters.getString("processingDate");
+				System.out.println(
+					"processing date.....: " + processingDate);
 			}
 
 			@Nullable
@@ -68,7 +70,8 @@ public class JobConfiguration {
 			public String process(final String item) {
 				final ExecutionContext executionContext = stepExecution.getExecutionContext();
 				final int resourceIndex = executionContext.getInt("MultiResourceItemReader.resourceIndex");
-				System.out.println("processing item = " + item + " coming from resource = " + resources[resourceIndex + 1]);
+				System.out.println(
+						"processing item = " + item + " coming from resource = " + resources[resourceIndex + 1]);
 				return item;
 			}
 		}
@@ -87,19 +90,13 @@ public class JobConfiguration {
 
 	@Bean
 	public Step step() {
-		return steps.get("step")
-				.<String, String>chunk(1)
-				.reader(multiResourceItemReader())
-				.processor(itemProcessor())
-				.writer(itemWriter())
-				.build();
+		return steps.get("step").<String, String>chunk(1).reader(multiResourceItemReader()).processor(itemProcessor())
+				.writer(itemWriter()).build();
 	}
 
 	@Bean
 	public Job job() {
-		return jobs.get("job")
-				.start(step())
-				.build();
+		return jobs.get("job").start(step()).build();
 	}
 
 }

@@ -38,7 +38,7 @@ public class JobScheduler {
     LOGGER.info("Processing date> " + processingDate);
     try {
         execution = jobLauncher.run(creditJob, new JobParametersBuilder()
-        .addDate("date", new Date()).toJobParameters());
+        .addString("processingDate", processingDate).toJobParameters());
         LOGGER.info("Job Started");
         System.out.println("Execution status: "+ execution.getStatus());
         msg = "JOB STARTED";
