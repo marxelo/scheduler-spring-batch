@@ -33,7 +33,9 @@ public class JobScheduler {
 
   String msg = null;
 
-  public String run(){      
+  public String run(String processingDate){     
+    
+    LOGGER.info("Processing date> " + processingDate);
     try {
         execution = jobLauncher.run(creditJob, new JobParametersBuilder()
         .addDate("date", new Date()).toJobParameters());

@@ -24,7 +24,7 @@ public class JobController {
     //     !JobScheduler.isEnabled();
     // JobScheduler.setEnabled(toggleEnabled);
 
-    String result = JobScheduler.run();
+    String result = JobScheduler.run(processingDate);
     LOGGER.info("processing Date: " + processingDate);
     LOGGER.info(result);
 
