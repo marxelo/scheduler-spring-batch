@@ -46,7 +46,7 @@ public class JobScheduler {
                     new JobParametersBuilder().addString("processingDate", processingDate).toJobParameters());
             LOGGER.info("Job Started");
             System.out.println("Execution status: " + execution.getStatus());
-            msg = "JOB STARTED";
+            msg = "Job Satus: " + execution.getStatus();
         } catch (JobExecutionAlreadyRunningException e) {
             e.printStackTrace();
         } catch (JobRestartException e) {
@@ -64,11 +64,9 @@ public class JobScheduler {
         return msg;
     }
 
-    @Scheduled(cron = "0/10 * * * * ?")
     public void runBatchJob() throws JobExecutionAlreadyRunningException, JobRestartException,
             JobInstanceAlreadyCompleteException, JobParametersInvalidException {
         LOGGER.info("start runBatchJob");
-
         jobLauncher.run(creditJob, new JobParametersBuilder().addDate("date", new Date()).toJobParameters());
 
     }
