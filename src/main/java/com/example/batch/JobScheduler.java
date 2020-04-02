@@ -1,5 +1,7 @@
 package com.example.batch;
 
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
@@ -13,6 +15,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @EnableScheduling
@@ -34,32 +37,40 @@ public class JobScheduler {
     @Value("${spring.main.web_environment}")
     private boolean webEnv;
 
-    
-  public String run(String processingDate){     
-    System.out.println("webEnv: " + webEnv);
+    public String run(String processingDate) {
+        System.out.println("webEnv: " + webEnv);
 
-    LOGGER.info("Processing date> " + processingDate);
-    try {
-        execution = jobLauncher.run(creditJob, new JobParametersBuilder()
-        .addString("processingDate", processingDate).toJobParameters());
-        LOGGER.info("Job Started");
-        System.out.println("Execution status: "+ execution.getStatus());
-        msg = "JOB STARTED";
-    } catch (JobExecutionAlreadyRunningException e) {
-        e.printStackTrace();
-    } catch (JobRestartException e) {           
-        e.printStackTrace();
-    } catch (JobInstanceAlreadyCompleteException e) {           
-        e.printStackTrace();
-    } catch (JobParametersInvalidException e) {         
-        e.printStackTrace();
-    } finally {
-      if (msg == null) {
-        msg = "Job Error";
+        LOGGER.info("Processing date> " + processingDate);
+        try {
+            execution = jobLauncher.run(creditJob,
+                    new JobParametersBuilder().addString("processingDate", processingDate).toJobParameters());
+            LOGGER.info("Job Started");
+            System.out.println("Execution status: " + execution.getStatus());
+            msg = "JOB STARTED";
+        } catch (JobExecutionAlreadyRunningException e) {
+            e.printStackTrace();
+        } catch (JobRestartException e) {
+            e.printStackTrace();
+        } catch (JobInstanceAlreadyCompleteException e) {
+            e.printStackTrace();
+        } catch (JobParametersInvalidException e) {
+            e.printStackTrace();
+        } finally {
+            if (msg == null) {
+                msg = "Job Error";
 
-      }
+            }
+        }
+        return msg;
     }
-    return msg;
-}
+
+    @Scheduled(cron = "0/10 * * * * ?")
+    public void runBatchJob() throws JobExecutionAlreadyRunningException, JobRestartException,
+            JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+        LOGGER.info("start runBatchJob");
+
+        jobLauncher.run(creditJob, new JobParametersBuilder().addDate("date", new Date()).toJobParameters());
+
+    }
 
 }
