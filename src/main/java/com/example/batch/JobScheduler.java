@@ -11,6 +11,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
@@ -18,21 +19,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class JobScheduler {
 
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(JobScheduler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobScheduler.class);
 
-  @Autowired
-  private JobLauncher jobLauncher;
+    @Autowired
+    private JobLauncher jobLauncher;
 
-  @Autowired
-  private Job creditJob;
+    @Autowired
+    private Job creditJob;
 
-  private JobExecution execution;
+    private JobExecution execution;
 
-  String msg = null;
+    String msg = null;
 
-  public String run(String processingDate){     
+    @Value("${spring.main.web_environment}")
+    private boolean webEnv;
+
     
+  public String run(String processingDate){     
+    System.out.println("webEnv: " + webEnv);
+
     LOGGER.info("Processing date> " + processingDate);
     try {
         execution = jobLauncher.run(creditJob, new JobParametersBuilder()
