@@ -46,7 +46,7 @@ public class JobScheduler {
                     new JobParametersBuilder().addString("processingDate", processingDate).toJobParameters());
             LOGGER.info("Job Started");
             System.out.println("Execution status: " + execution.getStatus());
-            msg = "Job Satus: " + execution.getStatus();
+            msg = execution.getStatus().toString();
         } catch (JobExecutionAlreadyRunningException e) {
             e.printStackTrace();
         } catch (JobRestartException e) {
