@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/startJob")
+@RequestMapping({"", "/", "index", "index.html"})
 public class JobController {
 
   private static final Logger LOGGER =
@@ -18,7 +18,7 @@ public class JobController {
   @Autowired
   JobScheduler JobScheduler;
 
-  @RequestMapping(value = "/creditJob/{processingDate}", method = RequestMethod.GET)
+  @RequestMapping(value = "/startJob/creditJob/{processingDate}", method = RequestMethod.GET)
   public String startBatchJob(@PathVariable String processingDate) {
 
     String result = JobScheduler.run(processingDate);
@@ -27,4 +27,10 @@ public class JobController {
 
     return result;
   }
+
+  @RequestMapping({"", "/", "index", "index.html"})
+  public String index(){
+
+      return "index";
+  }  
 }
