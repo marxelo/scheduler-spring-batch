@@ -27,7 +27,7 @@ public class JobController {
     return new JobExecutionRequest(jobName, fileDate, jobStatus);
   }
 
-  @GetMapping("/")
+  @GetMapping({ "", "/", "index", "index.html" })
   public String help() {
     return "Informe no fomarto /startJob?jobName=xxxx&?fileDate=YYYYMMDD";
   }
