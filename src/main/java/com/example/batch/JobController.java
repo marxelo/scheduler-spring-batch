@@ -1,30 +1,44 @@
 package com.example.batch;
 
+import org.apache.commons.validator.GenericValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/startJob")
 public class JobController {
 
-  private static final Logger LOGGER =
-      LoggerFactory.getLogger(JobScheduler.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(JobScheduler.class);
 
   @Autowired
   JobScheduler JobScheduler;
 
-  @RequestMapping(value = "/creditJob/{processingDate}", method = RequestMethod.GET)
-  public String startBatchJob(@PathVariable String processingDate) {
+  @GetMapping("/startJob")
+  public JobExecutionRequest jer(@RequestParam(value = "jobName", defaultValue = "creditJob") String jobName,
+      @RequestParam(value = "fileDate") String fileDate) {
+    if ((!jobName.equals("creditJob")) && !jobName.equals("debitJob")) {
+      LOGGER.info(jobName);
+      return new JobExecutionRequest(jobName, fileDate, "Invalid job name");
+    }
 
-    String result = JobScheduler.run(processingDate);
-    LOGGER.info("processing Date: " + processingDate);
-    LOGGER.info(result);
+    if (!GenericValidator.isDate(fileDate, "yyyyMMdd", true)) {
+      LOGGER.info(fileDate);
+      return new JobExecutionRequest(jobName, fileDate,
+          "Invalid date. Informe no formato /startJob?jobName=xxxx&?fileDate=YYYYMMdd");
+    }
 
-    return result;
+    String jobStatus = JobScheduler.run(fileDate);
+    LOGGER.info(jobStatus);
+    return new JobExecutionRequest(jobName, fileDate, jobStatus);
   }
+
+  @GetMapping({ "", "/", "/**", "index", "index.html" })
+  // as by default Spring maps unknown urls to "/**"
+  public String help() {
+    return "Informe no formato /startJob?jobName=xxxx&?fileDate=YYYYMMdd";
+  }
+
 }
