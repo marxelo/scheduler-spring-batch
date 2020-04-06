@@ -3,6 +3,7 @@ package com.example.batch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,9 +28,10 @@ public class JobController {
     return new JobExecutionRequest(jobName, fileDate, jobStatus);
   }
 
-  @GetMapping({ "", "/", "index", "index.html" })
+  @GetMapping({ "", "/", "/**", "index", "index.html" })
+  // as by default Spring maps unknown urls to "/**"
   public String help() {
-    return "Informe no fomarto /startJob?jobName=xxxx&?fileDate=YYYYMMDD";
+    return "Informe no formato /startJob?jobName=xxxx&?fileDate=YYYYMMDD";
   }
 
 }
